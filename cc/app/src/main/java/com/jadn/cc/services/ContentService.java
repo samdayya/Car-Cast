@@ -1,5 +1,8 @@
 package com.jadn.cc.services;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -313,14 +316,16 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
         if (got == 0 && !app_preferences.getBoolean("notifiyOnZeroDownloads", true)) {
             mNotificationManager.cancel(22);
         } else {
-            Notification notification = new Notification(R.drawable.icon2, "Download complete", System.currentTimeMillis());
-
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), 0);
 
-            notification.setLatestEventInfo(getBaseContext(), "Downloads Finished", "Downloaded " + got + " podcasts.", contentIntent);
-            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default_channel")
+				.setContentTitle("Downloads Finished")
+				.setContentText("Downloaded " + got + " podcasts.")
+				.setSmallIcon(android.R.drawable.ic_dialog_info)
+				.setContentIntent(contentIntent)
+				.setAutoCancel(true);
 
-            mNotificationManager.notify(22, notification);
+			NotificationManagerCompat.from(context).notify(22, builder.build());
         }
 
         metaHolder = new MetaHolder(getApplicationContext(), currentFile());
@@ -594,7 +599,7 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
         };
 
         final TelephonyManager telMgr = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
-        telMgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+//        telMgr.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
         metaHolder = new MetaHolder(getApplicationContext());
 //		mediaPlayer.setOnCompletionListener(this);
@@ -619,8 +624,12 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
             Intent intent = new Intent(Intent.ACTION_MEDIA_BUTTON);
             intent.setComponent(mMediaButtonReceiverComponent);
             mRemoteControlClientCompat = new RemoteControlClientCompat(
-                    PendingIntent.getBroadcast(this /*context*/,
-                            0 /*requestCode, ignored*/, intent /*intent*/, 0 /*flags*/)
+										PendingIntent.getBroadcast(
+												this,
+												0,
+												intent,
+												PendingIntent.FLAG_IMMUTABLE
+										)
             );
             RemoteControlHelper.registerRemoteControlClient(mAudioManager,
                     mRemoteControlClientCompat);
@@ -1049,17 +1058,16 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
     }
 
     void updateNotification(String update) {
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Activity.NOTIFICATION_SERVICE);
-
-        Notification notification = new Notification(R.drawable.iconbusy, "Downloading started", System.currentTimeMillis());
-
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), 0);
 
-        notification.setLatestEventInfo(getBaseContext(), "Downloading Started", update, contentIntent);
-        notification.flags = Notification.FLAG_ONGOING_EVENT;
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default_channel")
+			.setContentTitle("Downloading Podcasts")
+			.setContentText(update)
+			.setSmallIcon(android.R.drawable.ic_dialog_info)
+			.setContentIntent(contentIntent)
+			.setOngoing(true);
 
-        mNotificationManager.notify(23, notification);
-
+        NotificationManagerCompat.from(context).notify(23, builder.build());
     }
 
     public boolean isPlaying() {
@@ -1169,9 +1177,13 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
 
     void enableNotification() {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), 0);
-        Notification notification = new Notification(R.drawable.ccp_launcher, null, System.currentTimeMillis());
-        notification.flags |= Notification.FLAG_ONGOING_EVENT | Notification.FLAG_NO_CLEAR;
-        notification.setLatestEventInfo(this, getText(R.string.notification_status), getText(R.string.notification_text), contentIntent);
+        Notification notification = new NotificationCompat.Builder(context, "default_channel")
+			.setContentTitle("Car Cast")
+			.setContentText("Playing podcast")
+			.setSmallIcon(android.R.drawable.ic_media_play)
+			.setContentIntent(contentIntent)
+			.setOngoing(true)
+			.build();
 
         startForegroundCompat(R.string.notification_status, notification);
 

@@ -1,6 +1,11 @@
 package com.jadn.cc.core;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -201,7 +206,7 @@ public class CarCastApplication extends Application {
             "Jumping Jackrabbit", "rework package structure", "11-Aug-2009", //
             "Himalayas", "Uses actual service class for handing media content.", "06-Aug-2009", //
             "ice cream 4", "pings home every 15.  Immediately on wifi connect.", //
-            "29-July-2009", //
+            "29-July-2009", //setSmallIcon
             "hummus", "After phone call resume.", "26-July-2009", //
             "grapes", "Fix deletion and remembering location", "09-July-2009", "french fries", "order podcasts by date", "22-Jun-2009", //
             "easter egg", "add/delete sites", "21-Jun-2009"};
@@ -211,11 +216,21 @@ public class CarCastApplication extends Application {
     private ContentServiceListener contentServiceListener;
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        serviceIntent = new Intent(this, ContentService.class);
-        //WifiConnectedReceiver.registerForWifiBroadcasts(getApplicationContext());
-    }
+	public void onCreate() {
+		super.onCreate();
+		serviceIntent = new Intent(this, ContentService.class);
+
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+			NotificationChannel channel = new NotificationChannel(
+					"default_channel",
+					"Default Channel",
+					NotificationManager.IMPORTANCE_DEFAULT);
+			channel.setDescription("General notifications");
+
+			NotificationManager manager = getSystemService(NotificationManager.class);
+			manager.createNotificationChannel(channel);
+		}
+	}
 
     private ServiceConnection contentServiceConnection = new ServiceConnection() {
         @Override

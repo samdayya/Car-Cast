@@ -30,3 +30,5 @@ cctest/.settings
 ${out.packaged.file}.d
 ${out.packaged.file}
 cctest/lint.xml
+cc/comp.bat
+cc/app/libs/*.bak
