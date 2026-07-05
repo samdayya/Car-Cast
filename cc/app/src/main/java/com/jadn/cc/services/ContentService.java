@@ -316,7 +316,7 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
         if (got == 0 && !app_preferences.getBoolean("notifiyOnZeroDownloads", true)) {
             mNotificationManager.cancel(22);
         } else {
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), 0);
+PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default_channel")
 				.setContentTitle("Downloads Finished")
@@ -710,10 +710,10 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
                     pauseNow();
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    bumpForwardSeconds(30);
+                    bumpForwardSeconds(300);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    bumpForwardSeconds(-30);
+                    bumpForwardSeconds(-100);
                     break;
             }
             return not_sticky;
@@ -1058,7 +1058,7 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
     }
 
     void updateNotification(String update) {
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "default_channel")
 			.setContentTitle("Downloading Podcasts")
@@ -1175,8 +1175,8 @@ public class ContentService extends Service implements MediaPlayer.OnCompletionL
 
     private WakeLock partialWakeLock;
 
-    void enableNotification() {
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), 0);
+void enableNotification() {
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CarCast.class), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         Notification notification = new NotificationCompat.Builder(context, "default_channel")
 			.setContentTitle("Car Cast")
 			.setContentText("Playing podcast")
