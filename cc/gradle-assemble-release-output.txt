@@ -1,0 +1,68 @@
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders
+> Task :app:mergeReleaseNativeLibs NO-SOURCE
+> Task :app:stripReleaseDebugSymbols NO-SOURCE
+> Task :app:extractReleaseNativeSymbolTables NO-SOURCE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:checkReleaseDuplicateClasses
+> Task :app:javaPreCompileRelease
+> Task :app:checkReleaseAarMetadata
+> Task :app:processReleaseNavigationResources
+> Task :app:compileReleaseNavigationResources
+> Task :app:generateReleaseResValues
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests
+> Task :app:extractDeepLinksRelease
+> Task :app:parseReleaseLocalResources
+
+> Task :app:processReleaseMainManifest
+C:\Users\sam\Desktop\carcast\Car-Cast\cc\app\src\main\AndroidManifest.xml:207:5-209:41 Warning:
+	uses-sdk:targetSdkVersion value (34) specified in the manifest file is ignored. It is overridden by the value declared in the DSL or the variant API, or 1 if not declared/present. Current value is (33).
+[androidx.vectordrawable:vectordrawable-animated:1.0.0] C:\Users\sam\.gradle\caches\8.13\transforms\df79bff451ed346181cf7dcb169d029d\transformed\vectordrawable-animated-1.0.0\AndroidManifest.xml Warning:
+	Namespace 'androidx.vectordrawable' is used in multiple modules and/or libraries: androidx.vectordrawable:vectordrawable-animated:1.0.0, androidx.vectordrawable:vectordrawable:1.0.0. Please ensure that all modules and libraries have a unique namespace. For more information, See https://developer.android.com/studio/build/configure-app-module#set-namespace
+
+> Task :app:processReleaseManifest
+> Task :app:mergeReleaseArtProfile
+> Task :app:extractProguardFiles
+> Task :app:processReleaseJavaRes NO-SOURCE
+> Task :app:mergeReleaseStartupProfile
+> Task :app:mergeReleaseShaders
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets
+> Task :app:compressReleaseAssets
+> Task :app:extractReleaseVersionControlInfo
+> Task :app:collectReleaseDependencies
+> Task :app:sdkReleaseDependencyData
+> Task :app:writeReleaseAppMetadata
+> Task :app:writeReleaseSigningConfigVersions
+> Task :app:processReleaseManifestForPackage
+> Task :app:mergeReleaseJavaResource
+> Task :app:mergeReleaseResources
+> Task :app:processReleaseResources
+
+> Task :app:compileReleaseJavaWithJavac
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :app:expandReleaseArtProfileWildcards
+> Task :app:mergeReleaseGeneratedProguardFiles
+> Task :app:generateReleaseLintVitalReportModel
+> Task :app:lintVitalAnalyzeRelease
+> Task :app:lintVitalReportRelease
+> Task :app:lintVitalRelease
+> Task :app:minifyReleaseWithR8
+> Task :app:compileReleaseArtProfile
+> Task :app:convertShrunkResourcesToBinaryRelease
+> Task :app:optimizeReleaseResources
+> Task :app:packageRelease
+> Task :app:createReleaseApkListingFileRedirect
+> Task :app:assembleRelease
+
+[Incubating] Problems report is available at: file:///C:/Users/sam/Desktop/carcast/Car-Cast/cc/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 18s
+43 actionable tasks: 43 executed

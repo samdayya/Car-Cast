@@ -710,10 +710,10 @@ PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this
                     pauseNow();
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    bumpForwardSeconds(300);
+                    bumpForwardSeconds(30);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    bumpForwardSeconds(-100);
+                    bumpForwardSeconds(-30);
                     break;
             }
             return not_sticky;

@@ -203,7 +203,7 @@ public class FileSubscriptionHelper implements SubscriptionHelper {
 
         } catch (Exception e1) {
             TraceUtil.report(e1);
-            return Collections.emptyList();
+            return new java.util.ArrayList<Subscription>();
         }
     }
 

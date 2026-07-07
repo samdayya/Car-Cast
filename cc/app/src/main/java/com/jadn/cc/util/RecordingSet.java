@@ -109,15 +109,25 @@ public class RecordingSet {
             mNotificationManager.cancel(24);
         } else {
 
-            Notification notification = new Notification(R.drawable.idea, "Audio Recordings ", System.currentTimeMillis());
+					PendingIntent contentIntent = PendingIntent.getActivity(
+									context,
+									0,
+									new Intent(context, AudioRecorder.class),
+									PendingIntent.FLAG_IMMUTABLE
+					);
 
-            PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, AudioRecorder.class), 0);
+					Notification notification = new androidx.core.app.NotificationCompat.Builder(
+									context,
+									"default_channel"
+					)
+									.setSmallIcon(R.drawable.idea)
+									.setContentTitle("Audio Recordings")
+									.setContentText("You have " + r + " recording" + (r == 1 ? "." : "s."))
+									.setContentIntent(contentIntent)
+									.setAutoCancel(true)
+									.build();
 
-            notification.setLatestEventInfo(context, "Audio Recordings", "You have " + r + " recording"
-                    + (r == 1 ? "." : "s."), contentIntent);
-            //notification.flags = Notification.FLAG_AUTO_CANCEL;
-
-            mNotificationManager.notify(24, notification);
+					mNotificationManager.notify(24, notification);
         }
 
     }

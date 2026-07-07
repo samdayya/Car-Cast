@@ -21,10 +21,15 @@ public class Config {
 
     public File getCarCastRoot() {
         SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        File externalRoot = context.getExternalFilesDir(null);
+        File defaultRoot = externalRoot != null ? externalRoot : context.getFilesDir();
+        File legacyRoot = new File(defaultRoot, "carcast");
         String file = app_preferences.getString("CarCastRoot", null);
-        if (file == null) {
+
+        if (file == null || file.equals(legacyRoot.getAbsolutePath()) || file.equals(legacyRoot.toString())) {
             SharedPreferences.Editor editor = app_preferences.edit();
-            editor.putString("CarCastRoot", new File(android.os.Environment.getExternalStorageDirectory(), "carcast").toString());
+            // Mantindre l'estructura original de l'aplicació per coincidir amb la ruta de l'APK autor.
+            editor.putString("CarCastRoot", defaultRoot.getAbsolutePath());
             editor.commit();
             file = app_preferences.getString("CarCastRoot", null);
         }

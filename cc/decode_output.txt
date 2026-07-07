@@ -1,0 +1,7 @@
+HEADER: history version 2
+TYPE: <class 'javaobj.v1.transformers.DefaultObjectTransformer.JavaList'>
+ENTRIES: 4
+1 <javaobj:i0.g>
+2 <javaobj:i0.g>
+3 <javaobj:i0.g>
+4 <javaobj:i0.g>

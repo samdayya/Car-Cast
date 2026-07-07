@@ -1,0 +1,8 @@
+-dontwarn java.awt.**
+-dontwarn javax.activation.**
+-dontwarn com.sun.activation.**
+-dontwarn javax.mail.**
+-dontwarn org.apache.http.**
+-keep class javax.activation.** { *; }
+-keep class javax.mail.** { *; }
+-keep class com.jadn.cc.util.Mailer { *; }

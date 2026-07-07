@@ -18,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -146,7 +147,7 @@ public class CarCast extends BaseActivity {
 		ImageButton rewind30Button = (ImageButton) findViewById(R.id.rewind30);
 		rewind30Button.setBackgroundColor(0x0);
 		rewind30Button.setSoundEffectsEnabled(true);
-		rewind30Button.setOnClickListener(new Bumper(this, -30));
+		rewind30Button.setOnClickListener(new Bumper(this, -10));
 
 		ImageButton forward60Button = (ImageButton) findViewById(R.id.forward30);
 		forward60Button.setBackgroundColor(0x0);
@@ -338,13 +339,20 @@ public class CarCast extends BaseActivity {
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             TextView titleTextView = (TextView) findViewById(R.id.title);
+            ImageView micIndicator = (ImageView) findViewById(R.id.micIndicator);
 
         RecordingSet recordingSet = new RecordingSet(this);
         if(isAudioRecorderOff()){
             recordingSet.clearNotifications();
             titleTextView.setBackgroundDrawable((Drawable) null);
+            if (micIndicator != null) {
+                micIndicator.setVisibility(View.GONE);
+            }
         } else {
             titleTextView.setBackgroundResource(R.drawable.background_319);
+            if (micIndicator != null) {
+                micIndicator.setVisibility(View.VISIBLE);
+            }
             recordingSet.updateNotification();
         }
 
@@ -408,6 +416,18 @@ public class CarCast extends BaseActivity {
 			ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 			progressBar.setProgress(contentService.currentProgress());
 			updatePausePlay();
+
+			TextView textViewDesc = (TextView) findViewById(R.id.description);
+			textViewDesc.setVisibility(View.VISIBLE);
+			if (contentService != null && contentService.currentMeta() != null) {
+				String description = contentService.currentMeta().getDescription();
+				if (description == null || description.trim().length() == 0) {
+					description = "No description available";
+				}
+				textViewDesc.setText(description);
+			} else {
+				textViewDesc.setText("No description available");
+			}
 
 		} catch (Throwable e) {
 			Log.e("cc", "", e);

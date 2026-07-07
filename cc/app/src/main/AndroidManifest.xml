@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jadn.cc"
     android:versionCode="178"
     android:versionName="1.0.178"
     android:installLocation="auto" >
@@ -8,10 +7,12 @@
     <application
         android:name="com.jadn.cc.core.CarCastApplication"
         android:icon="@drawable/ccp_launcher"
-        android:label="Car Cast" >
+        android:label="Car Cast"
+        android:requestLegacyExternalStorage="true" >
         <activity
-            android:name=".ui.CarCast"
-            android:label="Car Cast" >
+						android:name=".ui.CarCast"
+            android:label="Car Cast"
+						android:exported="true" >            
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,14 +35,17 @@
         <activity android:name=".ui.Downloader" />
 
         <receiver
-            android:name="com.jadn.cc.core.WifiConnectedReceiver">
+            android:name="com.jadn.cc.core.WifiConnectedReceiver"
+						android:exported="true">
                <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 </intent-filter>
         </receiver>
         
         <activity android:name=".ui.DownloadProgress" />
-        <activity android:name=".ui.SubscriptionEdit" >
+				<activity
+						android:name=".ui.SubscriptionEdit"
+						android:exported="true" >
 
             <!--
             intent-filter>
@@ -119,7 +123,9 @@
         <activity
             android:name="com.google.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-        <activity android:name="com.jadn.cc.ui.OpmlImport" >
+        <activity
+						android:name="com.jadn.cc.ui.OpmlImport"
+						android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -137,13 +143,17 @@
         
         <service android:name=".services.ContentService" />
         <service android:name=".services.AlarmService" />
-        <service android:name=".services.AlarmHostService" >
+				<service
+						android:name=".services.AlarmHostService"
+						android:exported="true" >
             <intent-filter>
                 <action android:name="com.jadn.cc.services.AlarmHostService" />
             </intent-filter>
         </service>
 
-        <receiver android:name=".services.AlarmReceiver" >
+				<receiver
+						android:name=".services.AlarmReceiver"
+						android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
 
@@ -151,7 +161,10 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".services.ExternalReceiver" android:enabled="true" >
+				<receiver
+						android:name=".services.ExternalReceiver"
+						android:enabled="true"
+						android:exported="true" >
             <intent-filter>
                 <action android:name="com.jadn.cc.services.external.PAUSE" />
                 <action android:name="com.jadn.cc.services.external.PLAY" />
@@ -166,7 +179,9 @@
 			</intent-filter> </receiver>
         -->
 
-        <receiver android:name=".services.MusicIntentReceiver">
+				<receiver
+						android:name=".services.MusicIntentReceiver"
+						android:exported="true">
             <intent-filter>
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
@@ -185,12 +200,13 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Permís d'emmagatzematge per Android 10+ -->
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="26"
+        android:targetSdkVersion="34" />
 
     <supports-screens
         android:anyDensity="true"

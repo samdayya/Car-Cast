@@ -19,7 +19,7 @@ public class MetaFile {
 	File file;
 	Properties properties = new Properties();
         private static final String defaultBaseFilename = "0";
-	
+
 	String getFilename(){
 		return file.getName();
 	}
@@ -39,6 +39,7 @@ public class MetaFile {
 			properties.setProperty("title", file.getName());
 			properties.setProperty("feedName", "unknown feed");
 			properties.setProperty("currentPos", "0");
+			properties.setProperty("description", "");
 			computeDuration();
 			save();
 		}
@@ -179,7 +180,7 @@ public class MetaFile {
 	public boolean isListenedTo() {
 		return properties.getProperty("listenedTo" ) != null;
 	}
-	
+
 	public String getDescription(){
 		return properties.getProperty("description");
 	}

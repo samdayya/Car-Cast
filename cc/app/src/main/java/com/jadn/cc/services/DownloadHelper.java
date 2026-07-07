@@ -1,6 +1,7 @@
 package com.jadn.cc.services;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,6 +44,8 @@ public class DownloadHelper implements Sayer {
 	private TextView tv;
 	private boolean isRunning = true;
 	StringBuilder sb = new StringBuilder("Getting ready to start downloads\n");
+	private SimpleDateFormat logDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd hh:mma");
 
 	public DownloadHelper(int globalMax) {
 		this.globalMax = globalMax;
@@ -52,20 +55,40 @@ public class DownloadHelper implements Sayer {
         return isRunning;
     }
 
-	SimpleDateFormat sdf = new SimpleDateFormat("MMM-dd hh:mma");
+    private File getDownloadLogFile(ContentService contentService) {
+        Config config = new Config(contentService);
+        File logFile = config.getCarCastPath("download-log.log");
+        File parent = logFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        return logFile;
+    }
 
-	private String getLocalFileExtFromMimetype(String mimetype) {
-		if ("audio/mp3".equals(mimetype)) {
-			return ".mp3";
-		}
-		if ("audio/ogg".equals(mimetype)) {
-			return ".ogg";
-		}
-		return ".bin";
-	}
-
-	protected void downloadNewPodCasts(ContentService contentService) {
+    private void appendDownloadLog(ContentService contentService, String message) {
         try {
+            File logFile = getDownloadLogFile(contentService);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile, true), "UTF-8"));
+            writer.write(logDateFormat.format(new Date()) + " " + message + "\n");
+            writer.close();
+        } catch (Throwable t) {
+            Log.e("CarCast", "Unable to write download log", t);
+        }
+    }
+
+    private String getLocalFileExtFromMimetype(String mimetype) {
+        if ("audio/mp3".equals(mimetype)) {
+            return ".mp3";
+        }
+        if ("audio/ogg".equals(mimetype)) {
+            return ".ogg";
+        }
+        return ".bin";
+    }
+
+    protected void downloadNewPodCasts(ContentService contentService) {
+        try {
+            appendDownloadLog(contentService, "=== Download session started ===");
             DownloadHistory history = new DownloadHistory(contentService);
 
             say("Starting find/download new podcasts. CarCast ver " + CarCastApplication.getVersion());
@@ -88,6 +111,7 @@ public class DownloadHelper implements Sayer {
 
                 if (sub.enabled) {
                     try {
+                        appendDownloadLog(contentService, "QUERY SUBSCRIPTION: url=" + sub.url + " enabled=" + sub.enabled + " maxDownloads=" + sub.maxDownloads + " priority=" + sub.priority);
                         say("\nScanning subscription/feed: " + sub.url);
                         URL url = new URL(sub.url);
                         int foundStart = encloseureHandler.metaNets.size();
@@ -100,6 +124,7 @@ public class DownloadHelper implements Sayer {
                         encloseureHandler.setFeedName(name);
 
                         Util.findAvailablePodcasts(sub.url, encloseureHandler);
+                        appendDownloadLog(contentService, "FOUND " + (encloseureHandler.metaNets.size() - foundStart) + " candidate podcasts in " + sub.url);
 
                         String message = sitesScanned + "/" + sites.size() + ": " + name + ", "
                                 + (encloseureHandler.metaNets.size() - foundStart) + " new";
@@ -131,6 +156,16 @@ public class DownloadHelper implements Sayer {
                 if (history.contains(metaNet))
                     continue;
                 newPodcasts.add(metaNet);
+            }
+            appendDownloadLog(contentService, "DOWNLOAD CANDIDATES: " + newPodcasts.size());
+            for (MetaNet candidate : newPodcasts) {
+                appendDownloadLog(contentService, "METADATA: feed=" + candidate.getSubscription()
+                        + " title=" + candidate.getTitle()
+                        + " url=" + candidate.getUrl()
+                        + " size=" + candidate.getSize()
+                        + " mimetype=" + candidate.getMimetype()
+                        + " priority=" + candidate.getPriority()
+                        + " description=" + candidate.getDescription());
             }
             say(newPodcasts.size() + " podcasts will be downloaded.");
             contentService.updateNotification(newPodcasts.size() + " podcasts will be downloaded.");
@@ -211,10 +246,19 @@ public class DownloadHelper implements Sayer {
 
                     tempFile.renameTo(castFile);
                     new MetaFile(newPodcasts.get(i), castFile).save();
+                    appendDownloadLog(contentService, "DOWNLOAD SUCCESS: subscription=" + currentSubscription
+                            + " title=" + currentTitle
+                            + " file=" + castFile.getAbsolutePath()
+                            + " bytes=" + totalForThisPodcast
+                            + " expected=" + newPodcasts.get(i).getSize());
 
                     got++;
                     if (totalForThisPodcast != newPodcasts.get(i).getSize()) {
                         say("Note: reported size (in feed) doesnt match actual size (downloaded file)");
+                    appendDownloadLog(contentService, "SIZE MISMATCH: subscription=" + currentSubscription
+                            + " title=" + currentTitle
+                            + " expected=" + newPodcasts.get(i).getSize()
+                            + " actual=" + totalForThisPodcast);
                         // subtract out wrong value
                         podcastsTotalBytes -= newPodcasts.get(i).getSize();
                         // add in correct value
@@ -226,10 +270,12 @@ public class DownloadHelper implements Sayer {
                     contentService.newContentAdded();
 
                 } catch (Throwable e) {
+                    appendDownloadLog(contentService, "DOWNLOAD FAILED: url=" + newPodcasts.get(i).getUrl() + " error=" + e);
                     say("Problem downloading " + newPodcasts.get(i).getUrl() + " e:" + e);
                 }
             }
             say("Finished. Downloaded " + got + " new podcasts. " + sdf.format(new Date()));
+            appendDownloadLog(contentService, "Download session finished. Downloaded " + got + " podcasts.");
 
             contentService.doDownloadCompletedNotification(got);
         } finally {
